@@ -1,7 +1,7 @@
 # chess-guru relay
 
 A tiny forwarder that lets chess-guru reach Lichess and Chess.com when your own network blocks them.
-It has no dependencies. `relay.js` runs on Node ≥ 18 (Render, Termux); `edge.mjs` + `main.ts` run on Deno Deploy / Cloudflare Workers. and only forwards to these hosts:
+It has no dependencies. `relay.js` runs on Node ≥ 18 (Render, Termux); `edge.mjs` + `main.ts` run on Deno Deploy / Cloudflare Workers. It only forwards to these hosts:
 `lichess.org`, `explorer.lichess.ovh`, `tablebase.lichess.ovh`, `database.lichess.org` and `api.chess.com`.
 Every request must carry your secret.
 
@@ -15,6 +15,11 @@ Uses `main.ts` + `edge.mjs` (the fetch-API version of the relay; same rules as `
 3. In the app's **Settings → Environment variables**, add `RELAY_SECRET` with your secret, then redeploy if asked.
 4. Copy the app URL (something like `https://chess-guru-relay.<your-name>.deno.net`) into chess-guru **Settings → Relay URL**.
 5. Check it: opening `<url>/health` in a browser should show `{"ok":true,...}`.
+
+## Option A1: Back4App Containers (free, no card)
+1. https://containers.back4app.com → **New app** → connect GitHub → pick `chess-guru-relay` (branch `main`). It builds the `Dockerfile`.
+2. **Port:** `4100`. **Environment variables:** `RELAY_SECRET` = your secret.
+3. Deploy, then copy the public URL (`https://<app>-<id>.b4a.run`) into chess-guru **Settings → Relay URL**.
 
 ## Option A2: Cloudflare Workers (free, no card)
 `npx wrangler deploy worker.js --name chess-guru-relay --compatibility-date 2026-01-01`, then `npx wrangler secret put RELAY_SECRET`.
