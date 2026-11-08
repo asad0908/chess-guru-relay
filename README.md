@@ -1,14 +1,26 @@
 # chess-guru relay
 
 A tiny forwarder that lets chess-guru reach Lichess and Chess.com when your own network blocks them.
-It is one file (`relay.js`) with no dependencies, needs Node ≥ 18, and only forwards to these hosts:
+It has no dependencies. `relay.js` runs on Node ≥ 18 (Render, Termux); `edge.mjs` + `main.ts` run on Deno Deploy / Cloudflare Workers. and only forwards to these hosts:
 `lichess.org`, `explorer.lichess.ovh`, `tablebase.lichess.ovh`, `database.lichess.org` and `api.chess.com`.
 Every request must carry your secret.
 
 You need the **secret** from the `RELAY_SECRET=` line of chess-guru's `.env` file.
 To make a new one, run `node relay.js --gen-secret` and put the result in both places.
 
-## Option A: Render.com (free, works from anywhere)
+## Option A: Deno Deploy (free, no card, works from anywhere) — recommended
+Uses `main.ts` + `edge.mjs` (the fetch-API version of the relay; same rules as `relay.js`).
+1. Go to https://console.deno.com and sign in with GitHub. Allow access to the `chess-guru-relay` repository.
+2. **New app** → pick the `chess-guru-relay` repo → branch `main`. Leave the framework as **No preset / None** and set the **entrypoint** to `main.ts` (`deno.json` already says so). No build step is needed.
+3. In the app's **Settings → Environment variables**, add `RELAY_SECRET` with your secret, then redeploy if asked.
+4. Copy the app URL (something like `https://chess-guru-relay.<your-name>.deno.net`) into chess-guru **Settings → Relay URL**.
+5. Check it: opening `<url>/health` in a browser should show `{"ok":true,...}`.
+
+## Option A2: Cloudflare Workers (free, no card)
+`npx wrangler deploy worker.js --name chess-guru-relay --compatibility-date 2026-01-01`, then `npx wrangler secret put RELAY_SECRET`.
+The URL is `https://chess-guru-relay.<account>.workers.dev`. Note: workers.dev may be blocked on some networks.
+
+## Option A3: Render.com (Render may ask for a card)
 1. Create a GitHub repository, say `chess-guru-relay` (private is fine). Upload `relay.js`, `package.json` and `render.yaml`.
 2. On https://render.com sign in with GitHub, then choose **New → Blueprint**, pick the repository and click **Apply**.
    Alternatively: **New → Web Service** with runtime *Node*, build command `echo no build`, start command `node relay.js`, plan *Free*.
