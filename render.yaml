@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: chess-guru-relay
+    runtime: node
+    plan: free
+    buildCommand: "echo no build"
+    startCommand: "node relay.js"
+    healthCheckPath: /health
+    envVars:
+      - key: RELAY_SECRET
+        sync: false
