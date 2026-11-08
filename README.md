@@ -48,3 +48,10 @@ The URL is `https://chess-guru-relay.<account>.workers.dev`. Note: workers.dev m
 - The relay never logs headers or bodies. Your Lichess token passes through in the `Authorization` header and is never stored.
 - Your Lichess token travels: laptop → relay (HTTPS on Render; plain HTTP on your home Wi-Fi with the phone) → Lichess (HTTPS).
 - On a work laptop, check that using a relay is allowed by your employer's IT policy.
+
+## Option C: Android app (no Termux needed)
+1. On the phone, open https://github.com/asad0908/chess-guru-relay/raw/main/dist/chess-guru-relay.apk and install it. Android asks once to allow installs from your browser.
+2. Open **chess-guru relay**, paste the secret (from `RELAY_SECRET=` in `.env`), tap **Start relay**, then **Allow background running**.
+3. Put the address it shows (e.g. `http://192.168.1.102:4100`) into chess-guru **Settings → Relay URL**. The phone and computer must be on the same Wi-Fi.
+
+Build it yourself: `python -I relay/android/build.py --sdk <Android SDK>` (plain SDK tools; no Gradle). Source is in `relay/android/src`.
